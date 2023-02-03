@@ -2,18 +2,16 @@ package zapx_test
 
 import (
 	"net/url"
-	"sync"
 	"testing"
-	. "zapx"
 
+	"github.com/jeffzhangme/zapx"
 	"go.uber.org/zap"
 )
 
 func TestKafkaSink(t *testing.T) {
-	var wg sync.WaitGroup
-	stderr := SinkURL{url.URL{Opaque: "stderr"}}
-	sinkUrl := SinkURL{url.URL{Scheme: "kafka", Host: "127.0.0.1:9092", RawQuery: "topic=test_log_topic"}}
-	logger, _ := NewCachedLoggerConfig().AddSinks(stderr, sinkUrl).Build()
-	defer logger.Flush(&wg)
+	stderr := zapx.SinkURL{url.URL{Opaque: "stderr"}}
+	sinkUrl := zapx.SinkURL{url.URL{Scheme: zapx.SchemeKafka, Host: "127.0.0.1:9092", RawQuery: "topic=test_log_topic"}}
+	logger, _ := zapx.NewCachedLoggerConfig().AddSinks(stderr, sinkUrl).Build()
+	defer logger.Flush()
 	logger.Info("key", zap.String("k", "v"))
 }

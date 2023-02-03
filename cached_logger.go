@@ -1,8 +1,6 @@
 package zapx
 
 import (
-	"sync"
-
 	"go.uber.org/zap"
 )
 
@@ -17,11 +15,8 @@ func (p *CachedLogger) Add(fields ...zap.Field) {
 }
 
 // Flush flush cached log
-func (p *CachedLogger) Flush(wg *sync.WaitGroup) {
-	if wg != nil {
-		wg.Wait()
-	}
-	p.Sync()
+func (p *CachedLogger) Flush() {
+	_ = p.Sync()
 }
 
 // CachedSugar get sugared logger from cached logger
@@ -35,11 +30,8 @@ type CachedSugaredLogger struct {
 }
 
 // Flush flush cached sugar log
-func (p *CachedSugaredLogger) Flush(wg *sync.WaitGroup) {
-	if wg != nil {
-		wg.Wait()
-	}
-	p.Sync()
+func (p *CachedSugaredLogger) Flush() {
+	_ = p.Sync()
 }
 
 // DeCachedSugar get cached logger from sugared logger

@@ -43,7 +43,6 @@ func getCachedCore() *cachedCore {
 }
 
 func putCachedCore(core *cachedCore) {
-
 	core.clog.logs = core.clog.logs[:0]
 	core.context = core.context[:0]
 	_cachedCorePool.Put(core)
@@ -111,7 +110,7 @@ func (p *cachedCore) appendAll() {
 	p.appendGlobalKV(buff)
 	buff.AppendByte('}')
 	buff.AppendByte('\n')
-	p.out.Write(buff.Bytes())
+	_, _ = p.out.Write(buff.Bytes())
 }
 
 func (p *cachedCore) appendEntrys(buf *buffer.Buffer) {
@@ -139,7 +138,7 @@ func (p *cachedCore) appendEntrys(buf *buffer.Buffer) {
 			bs[len(bs)-1] = '}'
 			bs = append(bs, ',')
 			buf.Reset()
-			buf.Write(bs)
+			_, _ = buf.Write(bs)
 		} else {
 			p.appendEntry(log, buf)
 		}
@@ -150,7 +149,7 @@ func (p *cachedCore) appendEntry(entry loggedEntry, buf *buffer.Buffer) {
 	buff, _ := p.enc.EncodeEntry(entry.Entry, entry.context)
 	defer buff.Free()
 	p.appendKey(entry.Message, buf)
-	buf.Write(buff.Bytes())
+	_, _ = buf.Write(buff.Bytes())
 }
 
 func (p *cachedCore) appendKey(key string, buf *buffer.Buffer) {
@@ -165,5 +164,5 @@ func (p *cachedCore) appendGlobalKV(buf *buffer.Buffer) {
 	defer buff.Free()
 	gb := buff.Bytes()
 	gb = gb[1 : len(gb)-2]
-	buf.Write(gb)
+	_, _ = buf.Write(gb)
 }

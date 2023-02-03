@@ -7,13 +7,21 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-var sink zapcore.WriteSyncer
-var encoder zapcore.Encoder
-var level zapcore.Level
+var (
+	sink    zapcore.WriteSyncer
+	encoder zapcore.Encoder
+	level   zapcore.Level
+)
 
 func init() {
-	zap.RegisterSink("redis", InitRedisSink)
-	zap.RegisterSink("kafka", InitKafkaSink)
+	err := zap.RegisterSink(SchemeRedis, InitRedisSink)
+	if err != nil {
+		panic(err)
+	}
+	err = zap.RegisterSink(SchemeKafka, InitKafkaSink)
+	if err != nil {
+		panic(err)
+	}
 	eConfig := zap.NewProductionEncoderConfig()
 	eConfig.LineEnding = cachedLogLineEnding
 	eConfig.MessageKey = cachedLogMessageKey
@@ -32,6 +40,12 @@ const (
 	// PROD prod
 	PROD
 )
+
+const (
+	SchemeRedis = "redis"
+	SchemeKafka = "kafka"
+)
+
 const (
 	redisPubSubType      = "channel"
 	redisDefaultType     = "list"
@@ -47,9 +61,7 @@ const (
 	globalKeyPrefix     = "__"
 )
 
-var (
-	stdErrSink, _, _ = zap.Open("stderr")
-)
+var stdErrSink, _, _ = zap.Open("stderr")
 
 // SinkURL sink url
 type SinkURL struct {

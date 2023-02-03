@@ -11,13 +11,10 @@ import (
 	"go.uber.org/zap"
 )
 
-var (
-	kafkaSinkInsts = map[string]kafkaSink{}
-)
+var kafkaSinkInsts = map[string]kafkaSink{}
 
 type kafkaSink struct {
 	kafkaProducer sarama.SyncProducer
-	isAsync       bool
 	topic         string
 }
 

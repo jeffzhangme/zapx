@@ -2,18 +2,16 @@ package zapx_test
 
 import (
 	"net/url"
-	"sync"
 	"testing"
-	. "zapx"
 
+	"github.com/jeffzhangme/zapx"
 	"go.uber.org/zap"
 )
 
 func TestRedisSink(t *testing.T) {
-	var wg sync.WaitGroup
-	stderr := SinkURL{url.URL{Opaque: "stderr"}}
-	sinkUrl := SinkURL{url.URL{Scheme: "redis", Host: "127.0.0.1:6379", RawQuery: "db=0&type=list&key=log:for:test"}}
-	logger, _ := NewCachedLoggerConfig().AddSinks(stderr, sinkUrl).Build()
-	defer logger.Flush(&wg)
+	stderr := zapx.SinkURL{url.URL{Opaque: "stderr"}}
+	sinkUrl := zapx.SinkURL{url.URL{Scheme: zapx.SchemeRedis, Host: "127.0.0.1:6379", RawQuery: "db=0&type=list&key=log:for:test"}}
+	logger, _ := zapx.NewCachedLoggerConfig().AddSinks(stderr, sinkUrl).Build()
+	defer logger.Flush()
 	logger.Info("key", zap.String("k", "v"))
 }
