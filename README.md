@@ -10,9 +10,13 @@ Based on [uber-go/zap](https://github.com/uber-go/zap), log caching and redis/ka
 
 Using redis sink
 
+```shell
+go get github.com/jeffzhangme/zapx
+```
+
 ```go
 stderr := zapx.SinkURL{url.URL{Opaque: "stderr"}}
-sinkUrl := zapx.SinkURL{url.URL{Scheme: "redis", Host: "127.0.0.1:6379", RawQuery: "db=0&type=list&key=log:for:test"}}
+sinkUrl := zapx.SinkURL{url.URL{Scheme: zapx.SchemeRedis, Host: "127.0.0.1:6379", RawQuery: "db=0&type=list&key=log:for:test"}}
 logger, _ := zapx.NewCachedLoggerConfig().AddSinks(stderr, sinkUrl).Build()
 defer logger.Flush(nil)
 logger.Info("key", zap.String("k", "v"))
